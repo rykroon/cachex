@@ -1,2 +1,2 @@
-from .cache import Cache
-from .connections import connect
+from .basecache import BaseCache
+from .rediscache import RedisCache

@@ -39,13 +39,3 @@ class RedisCache(BaseCache):
     def delete(self, key):
         key = self._make_key(key)
         return self.client.delete(key) == 1
-
-    def expire(self, key, timeout=None):
-        key = self._make_key(key)
-        timeout = self.timeout if timeout is None else timeout
-        return self.client.expire(key, timeout)
-
-    def ttl(self, key):
-        key = self._make_key(key)
-        return self.client.ttl(key)
-

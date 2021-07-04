@@ -14,7 +14,7 @@ class BaseCache:
             return '{}:{}'.format(self.key_prefix, key)
         return key
 
-    def get(self, key, default):
+    def get(self, key, default=None):
         raise NotImplementedError
 
     def set(self, key, value, timeout=None):

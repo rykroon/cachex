@@ -1,5 +1,8 @@
 
 
+Undefined = object()
+
+
 class BaseCache:
 
     def __init__(self, key_prefix=None, timeout=300):
@@ -17,7 +20,7 @@ class BaseCache:
     def get(self, key, default=None):
         raise NotImplementedError
 
-    def set(self, key, value, timeout=None):
+    def set(self, key, value, timeout=Undefined):
         raise NotImplementedError
 
     def delete(self, key):

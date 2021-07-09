@@ -1,6 +1,6 @@
 import pickle
 import redis
-from .basecache import BaseCache
+from .basecache import BaseCache, Undefined
 
 
 class RedisCache(BaseCache):
@@ -30,10 +30,10 @@ class RedisCache(BaseCache):
         
         return self._load(value)
 
-    def set(self, key, value, timeout=None):
+    def set(self, key, value, timeout=Undefined):
         key = self._make_key(key)
         value = self._dump(value)
-        timeout = self.timeout if timeout is None else timeout
+        timeout = self.timeout if timeout is Undefined else timeout
         return self.client.set(key, value, ex=timeout)
 
     def delete(self, key):

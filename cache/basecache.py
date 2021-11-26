@@ -13,9 +13,7 @@ class BaseCache:
         raise NotImplementedError
 
     def _make_key(self, key):
-        if self.key_prefix:
-            return '{}:{}'.format(self.key_prefix, key)
-        return key
+        return f'{self.key_prefix}:{key}' if self.key_prefix else key
 
     def get(self, key, default=None):
         raise NotImplementedError

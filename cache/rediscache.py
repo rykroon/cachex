@@ -1,16 +1,16 @@
 import pickle
 import redis
-from .basecache import BaseCache, Undefined
+from cache.basecache import BaseCache, Undefined
 
 
 class RedisCache(BaseCache):
 
-    def __init__(self, key_prefix=None, timeout=300, *args, **kwargs):
-        super().__init__(key_prefix, timeout)
+    def __init__(self, serializer=None,  namespace=None, ttl=300, *args, **kwargs):
+        super().__init__(serializer, namespace, ttl)
         self.client = redis.Redis(*args, **kwargs)
 
     def __contains__(self, key):
-        key = self._make_key(key)
+        key = self._build_key(key)
         return key in self.client
 
     def _load(self, value):
@@ -23,19 +23,16 @@ class RedisCache(BaseCache):
         return pickle.dumps(value)
         
     def get(self, key, default=None):
-        key = self._make_key(key)
+        key = self._build_key(key)
         value = self.client.get(key)
-        if value is None:
-            return default
-        
-        return self._load(value)
+        return self.serializer.loads(value) 
 
-    def set(self, key, value, timeout=Undefined):
-        key = self._make_key(key)
-        value = self._dump(value)
-        timeout = self.timeout if timeout is Undefined else timeout
-        return self.client.set(key, value, ex=timeout)
+    def set(self, key, value, ttl=Undefined):
+        key = self._build_key(key)
+        value = self.serializer.dumps(value)
+        ttl = self.ttl if ttl is Undefined else ttl
+        return self.client.set(key, value, ex=ttl)
 
     def delete(self, key):
-        key = self._make_key(key)
+        key = self._build_key(key)
         return self.client.delete(key) == 1

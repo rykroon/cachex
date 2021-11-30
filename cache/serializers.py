@@ -21,18 +21,22 @@ class StringSerializer(BaseSerializer):
             return None
         if isinstance(value, bytes):
             return value.decode()
-        return value
+        return str(value)
 
 
 class JsonSerializer(BaseSerializer):
 
+    def __init__(self, dump_kwargs=None, load_kwargs=None):
+        self.dump_kwargs = dump_kwargs or {}
+        self.load_kwargs = load_kwargs or {}
+
     def dumps(self, value):
-        return json.dumps(value)
+        return json.dumps(value, **self.dump_kwargs)
 
     def loads(self, value):
         if value is None:
             return None
-        return json.loads(value)
+        return json.loads(value, **self.load_kwargs)
 
 
 class PickleSerializer(BaseSerializer):

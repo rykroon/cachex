@@ -1,2 +1,1 @@
-from .basecache import BaseCache
-from .rediscache import RedisCache
+from cache.cache import Cache

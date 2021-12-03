@@ -35,20 +35,7 @@ class Cache:
         self._backend.delete(key)
 
 
-class AsyncCache:
-
-    def __init__(self, namespace=None, ttl=DEFAULT_TTL,  backend=None, serializer=None):
-        self.namespace = namespace
-        self.ttl = ttl
-        self._backend = backend
-        self._serializer = serializer or StringSerializer()
-
-    def __contains__(self, key):
-        key = self._build_key(key)
-        return key in self._backend
-
-    def _build_key(self, key):
-        return f'{self.namespace}:{key}' if self.namespace else key
+class AsyncCache(Cache):
 
     async def get(self, key, default=None):
         key = self._build_key(key)

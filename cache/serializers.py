@@ -14,11 +14,11 @@ class BaseSerializer:
 class StringSerializer(BaseSerializer):
 
     def dumps(self, value):
+        if isinstance(value, bytes):
+            return value.decode()
         return str(value)
 
     def loads(self, value):
-        if value is None:
-            return None
         if isinstance(value, bytes):
             return value.decode()
         return str(value)
@@ -34,8 +34,6 @@ class JsonSerializer(BaseSerializer):
         return json.dumps(value, **self.dump_kwargs)
 
     def loads(self, value):
-        if value is None:
-            return None
         return json.loads(value, **self.load_kwargs)
 
 
@@ -45,6 +43,4 @@ class PickleSerializer(BaseSerializer):
         return pickle.dumps(value)
 
     def loads(self, value):
-        if value is None:
-            return None
         return pickle.loads(value)

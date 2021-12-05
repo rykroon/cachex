@@ -26,21 +26,24 @@ class StringSerializer(BaseSerializer):
 
 class JsonSerializer(BaseSerializer):
 
-    def __init__(self, dump_kwargs=None, load_kwargs=None):
-        self.dump_kwargs = dump_kwargs or {}
-        self.load_kwargs = load_kwargs or {}
+    def __init__(self, encoder=None, decoder=None):
+        self.encoder = encoder
+        self.decoder = decoder
 
     def dumps(self, value):
-        return json.dumps(value, **self.dump_kwargs)
+        return json.dumps(value, cls=self.encoder)
 
     def loads(self, value):
-        return json.loads(value, **self.load_kwargs)
+        return json.loads(value, cls=self.decoder)
 
 
 class PickleSerializer(BaseSerializer):
 
+    def __init__(self, protocol=None):
+        self.protocol = protocol
+
     def dumps(self, value):
-        return pickle.dumps(value)
+        return pickle.dumps(value, protocol=self.protocol)
 
     def loads(self, value):
         return pickle.loads(value)

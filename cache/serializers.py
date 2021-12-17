@@ -39,7 +39,7 @@ class JsonSerializer(BaseSerializer):
 
 class PickleSerializer(BaseSerializer):
 
-    def __init__(self, protocol=None):
+    def __init__(self, protocol=pickle.DEFAULT_PROTOCOL):
         self.protocol = protocol
 
     def dumps(self, value):

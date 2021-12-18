@@ -15,9 +15,8 @@ class Cache:
         key = self.key_builder(key, self.namespace)
         return key in self._backend
 
-    def _default_key_builder(self, key, namespace=None):
-        ns = namespace if namespace is not None else self.namespace
-        return f'{ns}:{key}' if ns is not None else key
+    def _default_key_builder(self, key, namespace):
+        return f'{namespace}:{key}' if namespace is not None else key
 
     def get(self, key, default=None):
         key = self.key_builder(key, self.namespace)

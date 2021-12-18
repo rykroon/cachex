@@ -6,5 +6,5 @@ setup(
     author='Ryan Kroon',
     author_email='rykroon.tech@gmail.com',
     packages=find_packages(),
-    install_requires=['redis']
+    install_requires=['redis', 'aioredis']
 )

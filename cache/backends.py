@@ -30,6 +30,9 @@ class Backend:
 
 class AsyncBackend:
 
+    async def exists(self, key):
+        raise NotImplementedError
+
     async def get(self, key):
         raise NotImplementedError
 
@@ -79,6 +82,9 @@ class AsyncRedisBackend(AsyncBackend):
         else:
             import aioredis
             self.client = aioredis.from_url(**kwargs)
+
+    async def exists(self, key):
+        return await self.client.exists(key) == 1
     
     async def get(self, key):
         value = await self.client.get(key)

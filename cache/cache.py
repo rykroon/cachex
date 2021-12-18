@@ -39,19 +39,19 @@ class Cache:
 class AsyncCache(Cache):
 
     async def get(self, key, default=None):
-        key = self._build_key(key)
+        key = self.key_builder(key, self.namespace)
         value = await self._backend.get(key)
         if value is MissingKey:
             return default
         return self._serializer.loads(value)
 
     async def set(self, key, value, ttl=NotPassed):
-        key = self._build_key(key)
+        key = self.key_builder(key, self.namespace)
         value = self._serializer.dumps(value)
         ttl = self.ttl if ttl is NotPassed else ttl
         await self._backend.set(key, value, ttl)
 
     async def delete(self, key):
-        key = self._build_key(key)
+        key = self.key_builder(key, self.namespace)
         await self._backend.delete(key)
 

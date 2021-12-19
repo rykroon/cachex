@@ -62,10 +62,17 @@ class TestRedisBackend(unittest.TestCase):
         self.backend.delete('a')
         assert self.backend.get('a') is MissingKey
         
-    def test_contains(self):
-        assert 'a' not in self.backend
+    def test_exists(self):
+        assert self.backend.exists('a') == False
         self.backend.set('a', b'1', None)
-        assert 'a' in self.backend
+        assert self.backend.exists('a') == True
+
+    def test_ttl(self):
+        assert self.backend.ttl('a') is MissingKey
+        self.backend.set('a', b'1', None)
+        assert self.backend.ttl('a') is None
+        self.backend.set('a', b'1', 20)
+        assert self.backend.ttl('a') == 20
 
 
 class TestAsyncRedisBackend(unittest.IsolatedAsyncioTestCase):
@@ -98,6 +105,13 @@ class TestAsyncRedisBackend(unittest.IsolatedAsyncioTestCase):
         assert await self.backend.exists('a') == False
         await self.backend.set('a', b'1', None)
         assert await self.backend.exists('a') == True
+
+    async def test_ttl(self):
+        assert await self.backend.ttl('a') is MissingKey
+        await self.backend.set('a', b'1', None)
+        assert await self.backend.ttl('a') is None
+        await self.backend.set('a', b'1', 20)
+        assert await self.backend.ttl('a') == 20
 
 
 if __name__ == '__main__':

@@ -4,7 +4,7 @@ from cache.constants import MissingKey
 class Backend:
 
     def __contains__(self, key):
-        raise NotImplementedError
+        return self.exists(key)
 
     def get(self, key):
         """
@@ -27,11 +27,19 @@ class Backend:
         """
         raise NotImplementedError
 
+    def exists(self, key):
+        raise NotImplementedError
+
+    def ttl(self, key):
+        """
+            Returns the TTL of the key.
+            Should return None if key does not have a ttl
+            Or MissingKey if the key does not exist.
+        """
+        raise NotImplementedError
+
 
 class AsyncBackend:
-
-    async def exists(self, key):
-        raise NotImplementedError
 
     async def get(self, key):
         raise NotImplementedError
@@ -40,6 +48,12 @@ class AsyncBackend:
         raise NotImplementedError
 
     async def delete(self, key):
+        raise NotImplementedError
+
+    async def exists(self, key):
+        raise NotImplementedError
+
+    async def ttl(self, key):
         raise NotImplementedError
 
 
@@ -54,9 +68,6 @@ class RedisBackend(Backend):
     def __init__(self, client):
         self.client = client
 
-    def __contains__(self, key):
-        return key in self.client
-
     def get(self, key):
         value = self.client.get(key)
         return MissingKey if value is None else value
@@ -66,6 +77,19 @@ class RedisBackend(Backend):
 
     def delete(self, key):
         self.client.delete(key)
+
+    def exists(self, key):
+        return self.client.exists(key) == 1
+
+    def ttl(self, key):
+        result = self.client.ttl(key)
+        if result == -1:
+            return None
+        
+        if result == -2:
+            return MissingKey
+
+        return result
 
 
 class AsyncRedisBackend(AsyncBackend):
@@ -78,9 +102,6 @@ class AsyncRedisBackend(AsyncBackend):
 
     def __init__(self, client):
         self.client = client
-
-    async def exists(self, key):
-        return await self.client.exists(key) == 1
     
     async def get(self, key):
         value = await self.client.get(key)
@@ -91,3 +112,16 @@ class AsyncRedisBackend(AsyncBackend):
 
     async def delete(self, key):
         await self.client.delete(key)
+
+    async def exists(self, key):
+        return await self.client.exists(key) == 1
+
+    async def ttl(self, key):
+        result = await self.client.ttl(key)
+        if result == -1:
+            return None
+        
+        if result == -2:
+            return MissingKey
+
+        return result

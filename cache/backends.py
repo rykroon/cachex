@@ -44,17 +44,15 @@ class AsyncBackend:
 
 
 class RedisBackend(Backend):
+
+    @classmethod
+    def create(cls, **kwargs):
+        import redis
+        client = redis.Redis(**kwargs)
+        return cls(client=client)
     
-    def __init__(self, client=None, **kwargs):
-        if client and kwargs:
-            raise ValueError
-
-        if client:
-            self.client = client
-
-        else:
-            import redis
-            self.client = redis.Redis(**kwargs)
+    def __init__(self, client):
+        self.client = client
 
     def __contains__(self, key):
         return key in self.client
@@ -72,16 +70,14 @@ class RedisBackend(Backend):
 
 class AsyncRedisBackend(AsyncBackend):
 
-    def __init__(self, client=None, **kwargs):
-        if client and kwargs:
-            raise ValueError
+    @classmethod
+    def create(cls, **kwargs):
+        import aioredis
+        client = aioredis.from_url(**kwargs)
+        return cls(client=client)
 
-        if client:
-            self.client = client
-
-        else:
-            import aioredis
-            self.client = aioredis.from_url(**kwargs)
+    def __init__(self, client):
+        self.client = client
 
     async def exists(self, key):
         return await self.client.exists(key) == 1

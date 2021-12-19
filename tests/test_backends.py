@@ -4,8 +4,36 @@ import time
 import redis
 import aioredis
 
-from cache.backends import AsyncRedisBackend, RedisBackend
+from cache.backends import Backend, AsyncBackend, AsyncRedisBackend, RedisBackend
 from cache.constants import MissingKey
+
+
+class TestBackend(unittest.TestCase):
+
+    def test_all(self):
+        backend = Backend()
+        with self.assertRaises(NotImplementedError):
+            backend.get('a')
+
+        with self.assertRaises(NotImplementedError):
+            backend.set('a', b'1', None)
+
+        with self.assertRaises(NotImplementedError):
+            backend.delete('a')
+
+
+class TestAsyncBackend(unittest.IsolatedAsyncioTestCase):
+
+    async def test_all(self):
+        backend = AsyncBackend()
+        with self.assertRaises(NotImplementedError):
+            await backend.get('a')
+
+        with self.assertRaises(NotImplementedError):
+            await backend.set('a', b'1', None)
+
+        with self.assertRaises(NotImplementedError):
+            await backend.delete('a')
 
 
 class TestRedisBackend(unittest.TestCase):
@@ -70,6 +98,7 @@ class TestAsyncRedisBackend(unittest.IsolatedAsyncioTestCase):
         assert await self.backend.exists('a') == False
         await self.backend.set('a', b'1', None)
         assert await self.backend.exists('a') == True
+
 
 if __name__ == '__main__':
     unittest.main()

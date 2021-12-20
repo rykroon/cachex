@@ -4,14 +4,15 @@ import time
 import redis
 import aioredis
 
-from cache.backends import Backend, AsyncBackend, AsyncRedisBackend, RedisBackend
+from cache.backends.base import BaseBackend, BaseAsyncBackend
+from cache.backends.redis import AsyncRedisBackend, RedisBackend
 from cache.constants import MissingKey
 
 
 class TestBackend(unittest.TestCase):
 
     def test_all(self):
-        backend = Backend()
+        backend = BaseBackend()
         with self.assertRaises(NotImplementedError):
             backend.get('a')
 
@@ -25,7 +26,7 @@ class TestBackend(unittest.TestCase):
 class TestAsyncBackend(unittest.IsolatedAsyncioTestCase):
 
     async def test_all(self):
-        backend = AsyncBackend()
+        backend = BaseAsyncBackend()
         with self.assertRaises(NotImplementedError):
             await backend.get('a')
 

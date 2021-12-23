@@ -10,7 +10,7 @@ class LocalBackend(BaseBackend):
         self.data = {}
 
     def __contains__(self, key):
-        return self.exists(key)
+        return self.has_key(key)
 
     def _get(self, key):
         value, expires_at = self.data.get(key, (MissingKey, MissingKey))
@@ -35,7 +35,7 @@ class LocalBackend(BaseBackend):
         except KeyError:
             pass
 
-    def exists(self, key):
+    def has_key(self, key):
         value = self.get(key)
         return value is not MissingKey
 

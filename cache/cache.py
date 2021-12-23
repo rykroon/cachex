@@ -35,8 +35,8 @@ class Cache:
         key = self.key_builder(key, self.namespace)
         self._backend.delete(key)
 
-    def exists(self, key):
-        return self.backend.exists(key)
+    def has_key(self, key):
+        return self.backend.has_key(key)
 
     def get_ttl(self, key):
         return self._backend.get_ttl(key)

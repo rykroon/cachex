@@ -58,10 +58,10 @@ class AbstractSyncBackend:
         self.backend.delete('a')
         assert self.backend.get('a') is MissingKey
         
-    def test_exists(self):
-        assert self.backend.exists('a') == False
+    def test_has_key(self):
+        assert self.backend.has_key('a') == False
         self.backend.set('a', b'1', None)
-        assert self.backend.exists('a') == True
+        assert self.backend.has_key('a') == True
 
     def test_get_ttl(self):
         assert self.backend.get_ttl('a') is MissingKey
@@ -109,10 +109,10 @@ class TestAsyncRedisBackend(unittest.IsolatedAsyncioTestCase):
         await self.backend.delete('a')
         assert await self.backend.get('a') is MissingKey
         
-    async def test_exists(self):
-        assert await self.backend.exists('a') == False
+    async def test_has_key(self):
+        assert await self.backend.has_key('a') == False
         await self.backend.set('a', b'1', None)
-        assert await self.backend.exists('a') == True
+        assert await self.backend.has_key('a') == True
 
     async def test_ttl(self):
         assert await self.backend.get_ttl('a') is MissingKey

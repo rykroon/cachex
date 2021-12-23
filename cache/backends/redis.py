@@ -24,8 +24,8 @@ class RedisBackend(BaseBackend):
     def delete(self, key):
         self.client.delete(key)
 
-    def exists(self, key):
-        return self.client.exists(key) == 1
+    def has_key(self, key):
+        return self.client.has_key(key) == 1
 
     def get_ttl(self, key):
         result = self.client.ttl(key)
@@ -65,8 +65,8 @@ class AsyncRedisBackend(BaseAsyncBackend):
     async def delete(self, key):
         await self.client.delete(key)
 
-    async def exists(self, key):
-        return await self.client.exists(key) == 1
+    async def has_key(self, key):
+        return await self.client.has_key(key) == 1
 
     async def get_ttl(self, key):
         result = await self.client.ttl(key)

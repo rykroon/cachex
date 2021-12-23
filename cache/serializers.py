@@ -11,6 +11,15 @@ class BaseSerializer:
         raise NotImplementedError
 
 
+class PassthroughSerializer(BaseSerializer):
+
+    def dumps(self, value):
+        return value
+
+    def loads(self, value):
+        return value
+
+
 class StringSerializer(BaseSerializer):
 
     def dumps(self, value):

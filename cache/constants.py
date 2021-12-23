@@ -20,19 +20,13 @@ class Singleton:
         return super().__repr__()
 
 
-class MissingKeyType(Singleton):
-    _repr = 'MissingKey'
-    
+class UndefinedType(Singleton):
+    _repr = 'Undefined'
+
     def __bool__(self):
         return False
 
-MissingKey = MissingKeyType()
+Undefined = UndefinedType()
 
-
-class NotPassedType(Singleton):
-    _repr = 'NotPassed'
-    
-    def __bool__(self):
-        return False
-
-NotPassed = NotPassedType()
+MissingKey = Undefined
+NotPassed = Undefined

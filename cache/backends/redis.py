@@ -27,8 +27,8 @@ class RedisBackend(BaseBackend):
     def exists(self, key):
         return self.client.exists(key) == 1
 
-    def ttl(self, key):
-        result = self.client.ttl(key)
+    def get_ttl(self, key):
+        result = self.client.get_ttl(key)
         if result == -1:
             return None
         
@@ -36,6 +36,12 @@ class RedisBackend(BaseBackend):
             return MissingKey
 
         return result
+
+    def set_ttl(self, key, ttl):
+        if ttl is None:
+            self.client.persist(key)
+        else:
+            self.client.expire(key, ttl)
 
 
 class AsyncRedisBackend(BaseAsyncBackend):
@@ -62,7 +68,7 @@ class AsyncRedisBackend(BaseAsyncBackend):
     async def exists(self, key):
         return await self.client.exists(key) == 1
 
-    async def ttl(self, key):
+    async def get_ttl(self, key):
         result = await self.client.ttl(key)
         if result == -1:
             return None
@@ -71,3 +77,6 @@ class AsyncRedisBackend(BaseAsyncBackend):
             return MissingKey
 
         return result
+
+    async def set_ttl(self, key, ttl):
+        ...

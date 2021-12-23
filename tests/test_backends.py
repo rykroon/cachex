@@ -70,12 +70,15 @@ class AbstractSyncBackend:
         self.backend.set('a', b'1', 20)
         assert self.backend.get_ttl('a') == 20
 
+    def test_set_ttl(self):
+        ...
+
 
 class TestRedisBackend(unittest.TestCase, AbstractSyncBackend):
     def setUp(self):
-        self.client = redis.Redis()
-        self.client.flushdb()
-        self.backend = RedisBackend(client=self.client)
+        client = redis.Redis()
+        client.flushdb()
+        self.backend = RedisBackend(client=client)
 
 
 class TestLocalBackend(unittest.TestCase, AbstractSyncBackend):

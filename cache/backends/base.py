@@ -1,18 +1,20 @@
+from typing import Any, Optional, Union
+from cache.constants import MissingKey
 
 
 class BaseBackend:
 
-    def __contains__(self, key):
+    def __contains__(self, key: str):
         return self.exists(key)
 
-    def get(self, key):
+    def get(self, key: str) -> Union[Any, MissingKey]:
         """
             Returns the value associated with the key.
             Should return MissingKey if the key does not exist
         """
         raise NotImplementedError
 
-    def set(self, key, value, ttl):
+    def set(self, key:str , value: Any, ttl: Optional[int]):
         """
             Set the value of `value` to key `key`.
             The key will expire after `ttl` seconds.
@@ -20,20 +22,26 @@ class BaseBackend:
         """
         raise NotImplementedError
 
-    def delete(self, key):
+    def delete(self, key: str):
         """
             Deletes the key
         """
         raise NotImplementedError
 
-    def exists(self, key):
+    def exists(self, key: str) -> bool:
         raise NotImplementedError
 
-    def ttl(self, key):
+    def get_ttl(self, key: str) -> Union[int, None, MissingKey]:
         """
             Returns the TTL of the key.
             Should return None if key does not have a ttl
             Or MissingKey if the key does not exist.
+        """
+        raise NotImplementedError
+
+    def set_ttl(self, key: str, ttl: Optional[int]):
+        """
+            Sets the TTL of the key.
         """
         raise NotImplementedError
 
@@ -52,5 +60,5 @@ class BaseAsyncBackend:
     async def exists(self, key):
         raise NotImplementedError
 
-    async def ttl(self, key):
+    async def get_ttl(self, key):
         raise NotImplementedError

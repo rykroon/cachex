@@ -5,6 +5,7 @@ import redis
 import aioredis
 
 from cache.backends.base import BaseBackend, BaseAsyncBackend
+from cache.backends.local import LocalBackend
 from cache.backends.redis import AsyncRedisBackend, RedisBackend
 from cache.constants import MissingKey
 
@@ -37,12 +38,7 @@ class TestAsyncBackend(unittest.IsolatedAsyncioTestCase):
             await backend.delete('a')
 
 
-class TestRedisBackend(unittest.TestCase):
-
-    def setUp(self):
-        self.client = redis.Redis()
-        self.client.flushdb()
-        self.backend = RedisBackend(client=self.client)
+class AbstractSyncBackend:
 
     def test_get(self):
         assert self.backend.get('a') is MissingKey
@@ -52,11 +48,10 @@ class TestRedisBackend(unittest.TestCase):
     def test_set(self):
         self.backend.set('a', b'1', None)
         assert self.backend.get('a') == b'1'
-        assert self.client.ttl('a') == -1
+        assert self.backend.get_ttl('a') == None
         
         self.backend.set('a', '1', 20)
-        time.sleep(1)
-        assert self.client.ttl('a') == 19
+        assert self.backend.get_ttl('a') == 20
 
     def test_delete(self):
         self.backend.set('a', b'1', None)
@@ -68,12 +63,24 @@ class TestRedisBackend(unittest.TestCase):
         self.backend.set('a', b'1', None)
         assert self.backend.exists('a') == True
 
-    def test_ttl(self):
-        assert self.backend.ttl('a') is MissingKey
+    def test_get_ttl(self):
+        assert self.backend.get_ttl('a') is MissingKey
         self.backend.set('a', b'1', None)
-        assert self.backend.ttl('a') is None
+        assert self.backend.get_ttl('a') is None
         self.backend.set('a', b'1', 20)
-        assert self.backend.ttl('a') == 20
+        assert self.backend.get_ttl('a') == 20
+
+
+class TestRedisBackend(unittest.TestCase, AbstractSyncBackend):
+    def setUp(self):
+        self.client = redis.Redis()
+        self.client.flushdb()
+        self.backend = RedisBackend(client=self.client)
+
+
+class TestLocalBackend(unittest.TestCase, AbstractSyncBackend):
+    def setUp(self):
+        self.backend = LocalBackend()
 
 
 class TestAsyncRedisBackend(unittest.IsolatedAsyncioTestCase):
@@ -108,11 +115,11 @@ class TestAsyncRedisBackend(unittest.IsolatedAsyncioTestCase):
         assert await self.backend.exists('a') == True
 
     async def test_ttl(self):
-        assert await self.backend.ttl('a') is MissingKey
+        assert await self.backend.get_ttl('a') is MissingKey
         await self.backend.set('a', b'1', None)
-        assert await self.backend.ttl('a') is None
+        assert await self.backend.get_ttl('a') is None
         await self.backend.set('a', b'1', 20)
-        assert await self.backend.ttl('a') == 20
+        assert await self.backend.get_ttl('a') == 20
 
 
 if __name__ == '__main__':

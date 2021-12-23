@@ -35,6 +35,15 @@ class Cache:
         key = self.key_builder(key, self.namespace)
         self._backend.delete(key)
 
+    def exists(self, key):
+        return self.backend.exists(key)
+
+    def get_ttl(self, key):
+        return self._backend.get_ttl(key)
+
+    def set_ttl(self, key, ttl):
+        ...
+
 
 class AsyncCache(Cache):
 

@@ -1,5 +1,5 @@
 from typing import Any, Optional, Union
-from cache.constants import MissingKey
+from cache.constants import MissingKeyType
 
 
 class BaseBackend:
@@ -7,7 +7,7 @@ class BaseBackend:
     def __contains__(self, key: str):
         return self.exists(key)
 
-    def get(self, key: str) -> Union[Any, MissingKey]:
+    def get(self, key: str) -> Union[Any, MissingKeyType]:
         """
             Returns the value associated with the key.
             Should return MissingKey if the key does not exist
@@ -31,7 +31,7 @@ class BaseBackend:
     def exists(self, key: str) -> bool:
         raise NotImplementedError
 
-    def get_ttl(self, key: str) -> Union[int, None, MissingKey]:
+    def get_ttl(self, key: str) -> Union[int, None, MissingKeyType]:
         """
             Returns the TTL of the key.
             Should return None if key does not have a ttl

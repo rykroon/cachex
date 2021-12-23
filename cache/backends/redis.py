@@ -28,7 +28,7 @@ class RedisBackend(BaseBackend):
         return self.client.exists(key) == 1
 
     def get_ttl(self, key):
-        result = self.client.get_ttl(key)
+        result = self.client.ttl(key)
         if result == -1:
             return None
         

@@ -48,17 +48,20 @@ class BaseBackend:
 
 class BaseAsyncBackend:
 
-    async def get(self, key):
+    async def get(self, key: str) -> Union[Any, UndefinedType]:
         raise NotImplementedError
 
-    async def set(self, key, value, ttl):
+    async def set(self, key: str, value: Any, ttl: Optional[int]):
         raise NotImplementedError
 
-    async def delete(self, key):
+    async def delete(self, key: str):
         raise NotImplementedError
 
-    async def has_key(self, key):
+    async def has_key(self, key: str) -> bool:
         raise NotImplementedError
 
-    async def get_ttl(self, key):
+    async def get_ttl(self, key: str) -> Union[int, None, UndefinedType]:
+        raise NotImplementedError
+
+    async def set_ttl(self, key: str, ttl: Optional[int]):
         raise NotImplementedError

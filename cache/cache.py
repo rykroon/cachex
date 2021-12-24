@@ -42,7 +42,7 @@ class Cache:
         return self._backend.get_ttl(key)
 
     def set_ttl(self, key, ttl):
-        ...
+        return self._backend.set_ttl(key, ttl)
 
 
 class AsyncCache(Cache):
@@ -64,3 +64,11 @@ class AsyncCache(Cache):
         key = self.key_builder(key, self.namespace)
         await self._backend.delete(key)
 
+    async def has_key(self, key):
+        return await self.backend.has_key(key)
+
+    async def get_ttl(self, key):
+        return await self._backend.get_ttl(key)
+
+    async def set_ttl(self, key, ttl):
+        return await self._backend.set_ttl(key, ttl)

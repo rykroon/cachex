@@ -80,6 +80,6 @@ class AsyncRedisBackend(BaseAsyncBackend):
 
     async def set_ttl(self, key, ttl):
         if ttl is None:
-            self.client.persist(key)
+            await self.client.persist(key)
         else:
-            self.client.expire(key, ttl)
+            await self.client.expire(key, ttl)

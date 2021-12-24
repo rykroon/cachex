@@ -22,9 +22,10 @@ class BaseBackend:
         """
         raise NotImplementedError
 
-    def delete(self, key: str):
+    def delete(self, key: str) -> bool:
         """
             Deletes the key
+            Returns True if a key was deleted, else False
         """
         raise NotImplementedError
 
@@ -39,9 +40,10 @@ class BaseBackend:
         """
         raise NotImplementedError
 
-    def set_ttl(self, key: str, ttl: Optional[int]):
+    def set_ttl(self, key: str, ttl: Optional[int]) -> bool:
         """
             Sets the TTL of the key.
+            Returns True if the ttl was set, else False
         """
         raise NotImplementedError
 
@@ -54,7 +56,7 @@ class BaseAsyncBackend:
     async def set(self, key: str, value: Any, ttl: Optional[int]):
         raise NotImplementedError
 
-    async def delete(self, key: str):
+    async def delete(self, key: str) -> bool:
         raise NotImplementedError
 
     async def has_key(self, key: str) -> bool:
@@ -63,5 +65,5 @@ class BaseAsyncBackend:
     async def get_ttl(self, key: str) -> Union[int, None, UndefinedType]:
         raise NotImplementedError
 
-    async def set_ttl(self, key: str, ttl: Optional[int]):
+    async def set_ttl(self, key: str, ttl: Optional[int]) -> bool:
         raise NotImplementedError

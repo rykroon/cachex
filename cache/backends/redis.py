@@ -22,7 +22,7 @@ class RedisBackend(BaseBackend):
         self.client.set(key, value, ex=ttl)
 
     def delete(self, key):
-        self.client.delete(key)
+        return self.client.delete(key) > 0
 
     def has_key(self, key):
         return self.client.exists(key) == 1
@@ -38,10 +38,16 @@ class RedisBackend(BaseBackend):
         return result
 
     def set_ttl(self, key, ttl):
-        if ttl is None:
-            self.client.persist(key)
-        else:
-            self.client.expire(key, ttl)
+        if ttl is not None:
+            return self.client.expire(key, ttl)
+
+        result = self.client.persist(key)
+        if result:
+            # persist() only returns True if the wasn't already persisted.
+            return result
+
+        # If the result is False we need to check if the key exists.
+        return self.get_ttl(key) is None
 
 
 class AsyncRedisBackend(BaseAsyncBackend):
@@ -63,7 +69,7 @@ class AsyncRedisBackend(BaseAsyncBackend):
         await self.client.set(key, value, ttl)
 
     async def delete(self, key):
-        await self.client.delete(key)
+        return await self.client.delete(key) > 0
 
     async def has_key(self, key):
         return await self.client.exists(key) == 1
@@ -79,7 +85,13 @@ class AsyncRedisBackend(BaseAsyncBackend):
         return result
 
     async def set_ttl(self, key, ttl):
-        if ttl is None:
-            await self.client.persist(key)
-        else:
-            await self.client.expire(key, ttl)
+        if ttl is not None:
+            return await self.client.expire(key, ttl)
+
+        result = await self.client.persist(key)
+        if result:
+            # persist() only returns True if the wasn't already persisted.
+            return result
+
+        # If the result is False we need to check if the key exists.
+        return await self.get_ttl(key) is None

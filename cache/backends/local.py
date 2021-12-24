@@ -32,8 +32,10 @@ class LocalBackend(BaseBackend):
     def delete(self, key):
         try:
             del self.data[key]
+            return True
+        
         except KeyError:
-            pass
+            return False
 
     def has_key(self, key):
         value = self.get(key)
@@ -54,3 +56,5 @@ class LocalBackend(BaseBackend):
         if value is not MissingKey:
             expires_at = None if ttl is None else time.time() + ttl
             self.data[key][1] = expires_at
+            return True
+        return False

@@ -27,7 +27,7 @@ class LocalBackend(BaseBackend):
 
     def set(self, key, value, ttl):
         expires_at = None if ttl is None else time.time() + ttl
-        self.data[key] = (value, expires_at)
+        self.data[key] = [value, expires_at]
 
     def delete(self, key):
         try:
@@ -50,7 +50,7 @@ class LocalBackend(BaseBackend):
         return ceil(expires_at - time.time())
 
     def set_ttl(self, key, ttl):
-        value, expires_at = self._get(key)
+        value, _ = self._get(key)
         if value is not MissingKey:
             expires_at = None if ttl is None else time.time() + ttl
-            self.set(key, value, expires_at)
+            self.data[key][1] = expires_at

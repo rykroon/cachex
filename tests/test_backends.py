@@ -23,6 +23,15 @@ class TestBackend(unittest.TestCase):
         with self.assertRaises(NotImplementedError):
             backend.delete('a')
 
+        with self.assertRaises(NotImplementedError):
+            backend.has_key('a')
+
+        with self.assertRaises(NotImplementedError):
+            backend.get_ttl('a')
+
+        with self.assertRaises(NotImplementedError):
+            backend.set_ttl('a', None)
+
 
 class TestAsyncBackend(unittest.IsolatedAsyncioTestCase):
 
@@ -36,6 +45,15 @@ class TestAsyncBackend(unittest.IsolatedAsyncioTestCase):
 
         with self.assertRaises(NotImplementedError):
             await backend.delete('a')
+
+        with self.assertRaises(NotImplementedError):
+            await backend.has_key('a')
+
+        with self.assertRaises(NotImplementedError):
+            await backend.get_ttl('a')
+
+        with self.assertRaises(NotImplementedError):
+            await backend.set_ttl('a', None)
 
 
 class AbstractSyncBackend:
@@ -71,7 +89,16 @@ class AbstractSyncBackend:
         assert self.backend.get_ttl('a') == 20
 
     def test_set_ttl(self):
-        ...
+        # Assert setting TTL of non-existent key returns False
+        assert self.backend.set_ttl('a', None) == False
+        assert self.backend.set_ttl('a', 20) == False
+
+        # Assert setting TTL of existing key returns True
+        self.backend.set('a', b'1', None)
+        assert self.backend.set_ttl('a', None) == True
+        assert self.backend.get_ttl('a') is None
+        assert self.backend.set_ttl('a', 20) == True
+        assert self.backend.get_ttl('a') == 20
 
 
 class TestRedisBackend(unittest.TestCase, AbstractSyncBackend):
@@ -108,8 +135,9 @@ class TestAsyncRedisBackend(unittest.IsolatedAsyncioTestCase):
         assert await self.client.ttl('a') == 19
 
     async def test_delete(self):
+        assert await self.backend.delete('a') == False
         await self.backend.set('a', b'1', None)
-        await self.backend.delete('a')
+        assert await self.backend.delete('a') == True
         assert await self.backend.get('a') is MissingKey
         
     async def test_has_key(self):
@@ -117,11 +145,23 @@ class TestAsyncRedisBackend(unittest.IsolatedAsyncioTestCase):
         await self.backend.set('a', b'1', None)
         assert await self.backend.has_key('a') == True
 
-    async def test_ttl(self):
+    async def test_get_ttl(self):
         assert await self.backend.get_ttl('a') is MissingKey
         await self.backend.set('a', b'1', None)
         assert await self.backend.get_ttl('a') is None
         await self.backend.set('a', b'1', 20)
+        assert await self.backend.get_ttl('a') == 20
+
+    async def test_set_ttl(self):
+        # Assert setting TTL of non-existent key returns False
+        assert await self.backend.set_ttl('a', None) == False
+        assert await self.backend.set_ttl('a', 20) == False
+
+        # Assert setting TTL of existing key returns True
+        await self.backend.set('a', b'1', None)
+        assert await self.backend.set_ttl('a', None) == True
+        assert await self.backend.get_ttl('a') is None
+        assert await self.backend.set_ttl('a', 20) == True
         assert await self.backend.get_ttl('a') == 20
 
 

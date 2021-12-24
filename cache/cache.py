@@ -4,10 +4,10 @@ from cache.constants import DEFAULT_TTL, NotPassed, MissingKey
 
 class Cache:
 
-    def __init__(self, namespace=None, key_builder=None, ttl=DEFAULT_TTL,  backend=None, serializer=None):
+    def __init__(self, namespace=None, ttl=DEFAULT_TTL,  key_builder=None, backend=None, serializer=None):
         self.namespace = namespace
         self.key_builder = key_builder or self._default_key_builder
-        self.ttl = ttl
+        self.default_ttl = ttl
         self._backend = backend
         self._serializer = serializer or StringSerializer()
 
@@ -28,7 +28,7 @@ class Cache:
     def set(self, key, value, ttl=NotPassed):
         key = self.key_builder(key, self.namespace)
         value = self._serializer.dumps(value)
-        ttl = self.ttl if ttl is NotPassed else ttl
+        ttl = self.default_ttl if ttl is NotPassed else ttl
         self._backend.set(key, value, ttl)
 
     def delete(self, key):
@@ -36,12 +36,16 @@ class Cache:
         self._backend.delete(key)
 
     def has_key(self, key):
+        key = self.key_builder(key, self.namespace)
         return self.backend.has_key(key)
 
     def get_ttl(self, key):
+        key = self.key_builder(key, self.namespace)
         return self._backend.get_ttl(key)
 
-    def set_ttl(self, key, ttl):
+    def set_ttl(self, key, ttl=NotPassed):
+        key = self.key_builder(key, self.namespace)
+        ttl = self.default_ttl if ttl is NotPassed else ttl
         return self._backend.set_ttl(key, ttl)
 
 
@@ -57,7 +61,7 @@ class AsyncCache(Cache):
     async def set(self, key, value, ttl=NotPassed):
         key = self.key_builder(key, self.namespace)
         value = self._serializer.dumps(value)
-        ttl = self.ttl if ttl is NotPassed else ttl
+        ttl = self.default_ttl if ttl is NotPassed else ttl
         await self._backend.set(key, value, ttl)
 
     async def delete(self, key):
@@ -65,10 +69,14 @@ class AsyncCache(Cache):
         await self._backend.delete(key)
 
     async def has_key(self, key):
+        key = self.key_builder(key, self.namespace)
         return await self.backend.has_key(key)
 
     async def get_ttl(self, key):
+        key = self.key_builder(key, self.namespace)
         return await self._backend.get_ttl(key)
 
-    async def set_ttl(self, key, ttl):
+    async def set_ttl(self, key, ttl=NotPassed):
+        key = self.key_builder(key, self.namespace)
+        ttl = self.default_ttl if ttl is NotPassed else ttl
         return await self._backend.set_ttl(key, ttl)

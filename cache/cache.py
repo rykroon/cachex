@@ -6,14 +6,13 @@ class Cache:
 
     def __init__(self, namespace=None, ttl=DEFAULT_TTL,  key_builder=None, backend=None, serializer=None):
         self.namespace = namespace
-        self.key_builder = key_builder or self._default_key_builder
         self.default_ttl = ttl
+        self.key_builder = key_builder or self._default_key_builder
         self._backend = backend
         self._serializer = serializer or StringSerializer()
 
     def __contains__(self, key):
-        key = self.key_builder(key, self.namespace)
-        return key in self._backend
+        return self.has_key(key)
 
     def _default_key_builder(self, key, namespace):
         return f'{namespace}:{key}' if namespace is not None else key

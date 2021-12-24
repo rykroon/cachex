@@ -79,4 +79,7 @@ class AsyncRedisBackend(BaseAsyncBackend):
         return result
 
     async def set_ttl(self, key, ttl):
-        ...
+        if ttl is None:
+            self.client.persist(key)
+        else:
+            self.client.expire(key, ttl)

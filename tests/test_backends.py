@@ -72,8 +72,9 @@ class AbstractSyncBackend:
         assert self.backend.get_ttl('a') == 20
 
     def test_delete(self):
+        assert self.backend.delete('a') == False
         self.backend.set('a', b'1', None)
-        self.backend.delete('a')
+        assert self.backend.delete('a') == True
         assert self.backend.get('a') is MissingKey
         
     def test_has_key(self):

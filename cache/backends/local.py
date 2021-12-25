@@ -9,9 +9,6 @@ class LocalBackend(BaseBackend):
     def __init__(self):
         self.data = {}
 
-    def __contains__(self, key):
-        return self.has_key(key)
-
     def _get(self, key):
         value, expires_at = self.data.get(key, (MissingKey, MissingKey))
         if value is not MissingKey:

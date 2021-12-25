@@ -4,9 +4,6 @@ from cache.constants import UndefinedType
 
 class BaseBackend:
 
-    def __contains__(self, key: str):
-        return self.has_key(key)
-
     def get(self, key: str) -> Union[Any, UndefinedType]:
         """
             Returns the value associated with the key.

@@ -36,7 +36,7 @@ class Cache:
 
     def has_key(self, key):
         key = self.key_builder(key, self.namespace)
-        return self.backend.has_key(key)
+        return self._backend.has_key(key)
 
     def get_ttl(self, key):
         key = self.key_builder(key, self.namespace)
@@ -69,7 +69,7 @@ class AsyncCache(Cache):
 
     async def has_key(self, key):
         key = self.key_builder(key, self.namespace)
-        return await self.backend.has_key(key)
+        return await self._backend.has_key(key)
 
     async def get_ttl(self, key):
         key = self.key_builder(key, self.namespace)

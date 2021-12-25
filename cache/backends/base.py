@@ -11,7 +11,7 @@ class BaseBackend:
         """
         raise NotImplementedError
 
-    def set(self, key: str , value: Any, ttl: Optional[int]):
+    def set(self, key: str, value: Any, ttl: Optional[int]):
         """
             Set the value of `value` to key `key`.
             The key will expire after `ttl` seconds.

@@ -26,6 +26,7 @@ class UndefinedType(Singleton):
     def __bool__(self):
         return False
 
+
 Undefined = UndefinedType()
 
 MissingKey = Undefined

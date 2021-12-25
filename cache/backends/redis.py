@@ -10,7 +10,7 @@ class RedisBackend(BaseBackend):
         import redis
         client = redis.Redis(**kwargs)
         return cls(client=client)
-    
+
     def __init__(self, client):
         self.client = client
 
@@ -31,7 +31,7 @@ class RedisBackend(BaseBackend):
         result = self.client.ttl(key)
         if result == -1:
             return None
-        
+
         if result == -2:
             return MissingKey
 
@@ -60,7 +60,7 @@ class AsyncRedisBackend(BaseAsyncBackend):
 
     def __init__(self, client):
         self.client = client
-    
+
     async def get(self, key):
         value = await self.client.get(key)
         return MissingKey if value is None else value
@@ -78,7 +78,7 @@ class AsyncRedisBackend(BaseAsyncBackend):
         result = await self.client.ttl(key)
         if result == -1:
             return None
-        
+
         if result == -2:
             return MissingKey
 

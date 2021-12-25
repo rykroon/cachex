@@ -30,7 +30,7 @@ class LocalBackend(BaseBackend):
         try:
             del self.data[key]
             return True
-        
+
         except KeyError:
             return False
 
@@ -42,10 +42,10 @@ class LocalBackend(BaseBackend):
         _, expires_at = self._get(key)
         if expires_at is MissingKey:
             return MissingKey
-        
+
         if expires_at is None:
             return None
-        
+
         return ceil(expires_at - time.time())
 
     def set_ttl(self, key, ttl):

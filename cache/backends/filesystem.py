@@ -7,6 +7,13 @@ class FileBackend(BaseBackend):
     def __init__(self, directory):
         self.directory = directory
 
+        if not os.path.exists(self.directory):
+            os.mkdir(self.directory)
+            return
+
+        if not os.path.isdir(directory):
+            raise FileExistsError
+
     def get(self, key):
         ...
 

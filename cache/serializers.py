@@ -28,9 +28,7 @@ class StringSerializer(BaseSerializer):
         return str(value)
 
     def loads(self, value):
-        if isinstance(value, bytes):
-            return value.decode()
-        return str(value)
+        return value
 
 
 class JsonSerializer(BaseSerializer):

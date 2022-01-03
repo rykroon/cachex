@@ -4,6 +4,12 @@ import pickle
 
 class BaseSerializer:
 
+    def dump(self, value, file):
+        raise NotImplementedError
+
+    def load(self, file):
+        raise NotImplementedError
+
     def dumps(self, value):
         raise NotImplementedError
 
@@ -37,6 +43,12 @@ class JsonSerializer(BaseSerializer):
         self.encoder = encoder
         self.decoder = decoder
 
+    def dump(self, value, file):
+        return json.dump(value, file, cls=self.encoder)
+
+    def load(self, file):
+        return json.load(file, cls=self.decoder)
+
     def dumps(self, value):
         return json.dumps(value, cls=self.encoder)
 
@@ -48,6 +60,12 @@ class PickleSerializer(BaseSerializer):
 
     def __init__(self, protocol=pickle.DEFAULT_PROTOCOL):
         self.protocol = protocol
+
+    def dump(self, value, file):
+        return pickle.dump(value, file, protocol=self.protocol)
+
+    def load(self, file):
+        return pickle.load(file)
 
     def dumps(self, value):
         return pickle.dumps(value, protocol=self.protocol)

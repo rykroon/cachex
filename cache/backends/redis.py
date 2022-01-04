@@ -29,20 +29,18 @@ class RedisBackend(BaseBackend):
         self.client.set(key, value, ex=ttl)
 
     def delete(self, key):
-        result = self.client.delete(key)
-        if result  == 0:
-            raise KeyError(key)
+        return self.client.delete(key) != 0
 
     def has_key(self, key):
         return self.client.exists(key) == 1
 
     def get_ttl(self, key):
         result = self.client.ttl(key)
+        if result == -2:
+            raise KeyError
+
         if result == -1:
             return None
-
-        if result == -2:
-            return MissingKey
 
         return result
 
@@ -56,7 +54,7 @@ class RedisBackend(BaseBackend):
             return result
 
         # If the result is False we need to check if the key exists.
-        return self.get_ttl(key) is None
+        return self.has_key(key)
 
 
 class AsyncRedisBackend(BaseAsyncBackend):

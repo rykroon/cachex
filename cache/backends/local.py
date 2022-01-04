@@ -5,33 +5,56 @@ from cache.constants import MissingKey
 from cache.serializers import PassthroughSerializer
 
 
+class LocalValue:
+    def __init__(self, value, ttl):
+        self.value = value
+        self.set_ttl(ttl)
+
+    def get_ttl(self):
+        if self.expires_at is None:
+            return None
+
+        return max(0, ceil(self.expires_at - time.time()))
+
+    def set_ttl(self, ttl):
+        self.expires_at = None if ttl is None else time.time() + ttl
+
+    def is_expired(self):
+        if self.expires_at is None:
+            return False
+        return time.time() > self.expires_at
+
+
 class LocalBackend(BaseBackend):
 
     def __init__(self, serializer=None):
         self.serializer = serializer if serializer is not None else PassthroughSerializer()
         self.data = {}
 
-    def _get(self, key):
-        value, expires_at = self.data[key]
+    def _get_value(self, key):
+        value = self.data.get(key)
+        if value is None:
+            return
         
-        if expires_at is not None and time.time() > expires_at:
+        if value.is_expired():
             del self.data[key]
-            raise KeyError(key)
+            return
 
-        return value, expires_at
+        return value
 
     def get(self, key):
-        value, _ = self._get(key)
-        return self.serializer.loads(value)
+        value = self._get_value(key)
+        if value is None:
+            raise KeyError
+        return self.serializer.loads(value.value)
 
     def set(self, key, value, ttl):
         value = self.serializer.dumps(value)
-        expires_at = None if ttl is None else time.time() + ttl
-        self.data[key] = [value, expires_at]
+        self.data[key] = LocalValue(value, ttl)
 
     def delete(self, key):
+        self._get_value(key)
         try:
-            self.get(key)
             del self.data[key]
             return True
 
@@ -39,25 +62,19 @@ class LocalBackend(BaseBackend):
             return False
 
     def has_key(self, key):
-        try:
-            self.get(key)
-            return True
-
-        except KeyError:
-            return False
+        value = self._get_value(key)
+        return value is not None
 
     def get_ttl(self, key):
-        _, expires_at = self._get(key)
+        value = self._get_value(key)
+        if value is not None:
+            return value.get_ttl()
 
-        if expires_at is None:
-            return None
-
-        return ceil(expires_at - time.time())
+        raise KeyError
 
     def set_ttl(self, key, ttl):
-        if not self.has_key(key):
+        value = self._get_value(key)
+        if value is None:
             return False
-
-        expires_at = None if ttl is None else time.time() + ttl
-        self.data[key][1] = expires_at
+        value.set_ttl(ttl)
         return True

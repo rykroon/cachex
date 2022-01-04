@@ -90,10 +90,12 @@ class AbstractSyncBackend:
         # Test that key no longer exists after expiration
 
     def test_get_ttl(self):
-        assert self.backend.get_ttl('a') is MissingKey
-        self.backend.set('a', b'1', None)
+        with self.assertRaises(KeyError):
+            self.backend.get_ttl('a')
+        
+        self.backend.set('a', 1, None)
         assert self.backend.get_ttl('a') is None
-        self.backend.set('a', b'1', 20)
+        self.backend.set('a', 1, 20)
         assert self.backend.get_ttl('a') == 20
 
     def test_set_ttl(self):
@@ -102,7 +104,7 @@ class AbstractSyncBackend:
         assert self.backend.set_ttl('a', 20) == False
 
         # Assert setting TTL of existing key returns True
-        self.backend.set('a', b'1', None)
+        self.backend.set('a', 1, None)
         assert self.backend.set_ttl('a', None) == True
         assert self.backend.get_ttl('a') is None
         assert self.backend.set_ttl('a', 20) == True

@@ -4,10 +4,10 @@ from cache.constants import UndefinedType
 
 class BaseBackend:
 
-    def get(self, key: str) -> Union[Any, UndefinedType]:
+    def get(self, key: str) -> Any:
         """
             Returns the value associated with the key.
-            Returns Undefined if the key does not exist.
+            Raises KeyError if key is not found.
         """
         raise NotImplementedError
 
@@ -17,6 +17,9 @@ class BaseBackend:
             The key will expire after `ttl` seconds.
             The key will never expire if `ttl` is None
         """
+        raise NotImplementedError
+
+    def add(self, key: str, value: Any, ttl: Optional[int]) -> bool:
         raise NotImplementedError
 
     def delete(self, key: str) -> bool:
@@ -29,11 +32,11 @@ class BaseBackend:
     def has_key(self, key: str) -> bool:
         raise NotImplementedError
 
-    def get_ttl(self, key: str) -> Union[int, None, UndefinedType]:
+    def get_ttl(self, key: str) -> Optional[int]:
         """
             Returns the TTL of the key.
             Return None if key does not have a ttl
-            Returns Undefined if the key does not exist.
+            Raises KeyError if the key does not exist.
         """
         raise NotImplementedError
 

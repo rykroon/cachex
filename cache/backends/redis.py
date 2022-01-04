@@ -1,28 +1,37 @@
 from cache.backends.base import BaseBackend
 from cache.backends.base import BaseAsyncBackend
 from cache.constants import MissingKey
+from cache.serializers import PickleSerializer
 
 
 class RedisBackend(BaseBackend):
 
-    @classmethod
-    def create(cls, **kwargs):
-        import redis
-        client = redis.Redis(**kwargs)
-        return cls(client=client)
+    def __init__(self, serializer=None, client=None, **client_kwargs):
+        self.serializer = serializer if serializer is not None else PickleSerializer()
+        if client and client_kwargs:
+            raise ValueError("Cannot pass a client and client kwargs.")
 
-    def __init__(self, client):
-        self.client = client
+        if client:
+            self.client = client
+            return
+
+        import redis
+        self.client = redis.Redis(**client_kwargs)
 
     def get(self, key):
         value = self.client.get(key)
-        return MissingKey if value is None else value
+        if value is None:
+            raise KeyError(key)
+        return self.serializer.loads(value)
 
     def set(self, key, value, ttl):
+        value = self.serializer.dumps(value)
         self.client.set(key, value, ex=ttl)
 
     def delete(self, key):
-        return self.client.delete(key) > 0
+        result = self.client.delete(key)
+        if result  == 0:
+            raise KeyError(key)
 
     def has_key(self, key):
         return self.client.exists(key) == 1
@@ -52,14 +61,17 @@ class RedisBackend(BaseBackend):
 
 class AsyncRedisBackend(BaseAsyncBackend):
 
-    @classmethod
-    def create(cls, **kwargs):
-        import aioredis
-        client = aioredis.from_url(**kwargs)
-        return cls(client=client)
+    def __init__(self, serializer=None, client=None, **client_kwargs):
+        self.serializer = serializer if serializer is None else PickleSerializer()
+        if client and client_kwargs:
+            raise ValueError("Cannot pass a client and client kwargs.")
 
-    def __init__(self, client):
-        self.client = client
+        if client_kwargs:
+            import aioredis
+            self.client = aioredis.from_url(**client_kwargs)
+
+        else:
+            self.client = client
 
     async def get(self, key):
         value = await self.client.get(key)

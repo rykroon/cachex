@@ -1,6 +1,5 @@
 from cache.backends import LocalBackend
 from cache.constants import DEFAULT_TTL, NotPassed, MissingKey
-from cache.serializers import PickleSerializer
 
 
 class Cache:
@@ -10,14 +9,12 @@ class Cache:
             namespace=None,
             ttl=DEFAULT_TTL,
             key_builder=None,
-            backend=LocalBackend(),
-            serializer=PickleSerializer()
+            backend=LocalBackend()
             ):
         self.namespace = namespace
         self.default_ttl = ttl
         self.key_builder = key_builder or self._default_key_builder
         self._backend = backend
-        self._serializer = serializer
 
     def __contains__(self, key):
         return self.has_key(key)
@@ -27,14 +24,13 @@ class Cache:
 
     def get(self, key, default=None):
         key = self.key_builder(key, self.namespace)
-        value = self._backend.get(key)
-        if value is MissingKey:
+        try:
+            return self._backend.get(key)
+        except KeyError:
             return default
-        return self._serializer.loads(value)
 
     def set(self, key, value, ttl=NotPassed):
         key = self.key_builder(key, self.namespace)
-        value = self._serializer.dumps(value)
         ttl = self.default_ttl if ttl is NotPassed else ttl
         self._backend.set(key, value, ttl)
 

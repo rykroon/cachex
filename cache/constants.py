@@ -1,5 +1,6 @@
 
 DEFAULT_TTL = 300
+Persist = None # a Synonym for a Persistent key, AKA a key that does not expire.
 
 
 class Singleton:

@@ -32,6 +32,15 @@ class BaseBackend:
     def has_key(self, key: str) -> bool:
         raise NotImplementedError
 
+    def get_many(self, keys: list[str]) -> dict[str, Any]:
+        ...
+
+    def set_many(self, mapping: dict, ttl: Optional[int]):
+        ...
+
+    def delete_many(self, keys: list[str]):
+        ...
+
     def get_ttl(self, key: str) -> Optional[int]:
         """
             Returns the TTL of the key.

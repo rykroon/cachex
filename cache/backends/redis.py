@@ -50,7 +50,7 @@ class RedisBackend(BaseBackend):
 
         result = self.client.persist(key)
         if result:
-            # persist() only returns True if the wasn't already persisted.
+            # persist() only returns True if the key wasn't already persisted.
             return result
 
         # If the result is False we need to check if the key exists.

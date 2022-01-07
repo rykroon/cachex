@@ -123,56 +123,56 @@ class TestLocalBackend(unittest.TestCase, AbstractSyncBackend):
         self.backend = LocalBackend()
 
 
-class ATestAsyncRedisBackend(unittest.IsolatedAsyncioTestCase):
+# class ATestAsyncRedisBackend(unittest.IsolatedAsyncioTestCase):
 
-    async def asyncSetUp(self):
-        self.client = aioredis.from_url('redis://localhost')
-        await self.client.flushdb()
-        self.backend = AsyncRedisBackend(client=self.client)
+#     async def asyncSetUp(self):
+#         self.client = aioredis.from_url('redis://localhost')
+#         await self.client.flushdb()
+#         self.backend = AsyncRedisBackend(client=self.client)
 
-    async def test_get(self):
-        assert await self.backend.get('a') is MissingKey
-        await self.backend.set('a', b'1', None)
-        assert await self.backend.get('a') == b'1'
+#     async def test_get(self):
+#         assert await self.backend.get('a') is MissingKey
+#         await self.backend.set('a', b'1', None)
+#         assert await self.backend.get('a') == b'1'
 
-    async def test_set(self):
-        await self.backend.set('a', b'1', None)
-        assert await self.backend.get('a') == b'1'
-        assert await self.client.ttl('a') == -1
+#     async def test_set(self):
+#         await self.backend.set('a', b'1', None)
+#         assert await self.backend.get('a') == b'1'
+#         assert await self.client.ttl('a') == -1
         
-        await self.backend.set('a', '1', 20)
-        time.sleep(1)
-        assert await self.client.ttl('a') == 19
+#         await self.backend.set('a', '1', 20)
+#         time.sleep(1)
+#         assert await self.client.ttl('a') == 19
 
-    async def test_delete(self):
-        assert await self.backend.delete('a') == False
-        await self.backend.set('a', b'1', None)
-        assert await self.backend.delete('a') == True
-        assert await self.backend.get('a') is MissingKey
+#     async def test_delete(self):
+#         assert await self.backend.delete('a') == False
+#         await self.backend.set('a', b'1', None)
+#         assert await self.backend.delete('a') == True
+#         assert await self.backend.get('a') is MissingKey
         
-    async def test_has_key(self):
-        assert await self.backend.has_key('a') == False
-        await self.backend.set('a', b'1', None)
-        assert await self.backend.has_key('a') == True
+#     async def test_has_key(self):
+#         assert await self.backend.has_key('a') == False
+#         await self.backend.set('a', b'1', None)
+#         assert await self.backend.has_key('a') == True
 
-    async def test_get_ttl(self):
-        assert await self.backend.get_ttl('a') is MissingKey
-        await self.backend.set('a', b'1', None)
-        assert await self.backend.get_ttl('a') is None
-        await self.backend.set('a', b'1', 20)
-        assert await self.backend.get_ttl('a') == 20
+#     async def test_get_ttl(self):
+#         assert await self.backend.get_ttl('a') is MissingKey
+#         await self.backend.set('a', b'1', None)
+#         assert await self.backend.get_ttl('a') is None
+#         await self.backend.set('a', b'1', 20)
+#         assert await self.backend.get_ttl('a') == 20
 
-    async def test_set_ttl(self):
-        # Assert setting TTL of non-existent key returns False
-        assert await self.backend.set_ttl('a', None) == False
-        assert await self.backend.set_ttl('a', 20) == False
+#     async def test_set_ttl(self):
+#         # Assert setting TTL of non-existent key returns False
+#         assert await self.backend.set_ttl('a', None) == False
+#         assert await self.backend.set_ttl('a', 20) == False
 
-        # Assert setting TTL of existing key returns True
-        await self.backend.set('a', b'1', None)
-        assert await self.backend.set_ttl('a', None) == True
-        assert await self.backend.get_ttl('a') is None
-        assert await self.backend.set_ttl('a', 20) == True
-        assert await self.backend.get_ttl('a') == 20
+#         # Assert setting TTL of existing key returns True
+#         await self.backend.set('a', b'1', None)
+#         assert await self.backend.set_ttl('a', None) == True
+#         assert await self.backend.get_ttl('a') is None
+#         assert await self.backend.set_ttl('a', 20) == True
+#         assert await self.backend.get_ttl('a') == 20
 
 
 if __name__ == '__main__':

@@ -53,13 +53,12 @@ class LocalBackend(BaseBackend):
         self.data[key] = LocalValue(value, ttl)
 
     def delete(self, key):
-        self._get_value(key)
-        try:
-            del self.data[key]
-            return True
-
-        except KeyError:
+        value = self._get_value(key)
+        if value is None:
             return False
+
+        del self.data[key]
+        return True
 
     def has_key(self, key):
         value = self._get_value(key)
@@ -67,10 +66,10 @@ class LocalBackend(BaseBackend):
 
     def get_ttl(self, key):
         value = self._get_value(key)
-        if value is not None:
-            return value.get_ttl()
+        if value is None:
+            raise KeyError
 
-        raise KeyError
+        return value.get_ttl()
 
     def set_ttl(self, key, ttl):
         value = self._get_value(key)

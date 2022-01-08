@@ -32,7 +32,7 @@ class BaseBackend:
     def has_key(self, key: str) -> bool:
         raise NotImplementedError
 
-    def get_many(self, keys: list[str]) -> list[Any]:
+    def get_many(self, keys: list[str]) -> dict[str, Any]:
         raise NotImplementedError
 
     def set_many(self, mapping: dict[str, Any], ttl: Optional[int]):

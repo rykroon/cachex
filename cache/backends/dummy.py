@@ -5,7 +5,7 @@ from cache.constants import MissingKey
 class DummyBackend(BaseBackend):
 
     def get(self, key):
-        raise KeyError(key)
+        return MissingKey
 
     def set(self, key, value, ttl):
         pass
@@ -14,13 +14,13 @@ class DummyBackend(BaseBackend):
         return False
 
     def delete(self, key):
-        raise KeyError(key)
+        return False
 
     def has_key(self, key):
         return False
 
     def get_ttl(self, key):
-        raise KeyError
+        return MissingKey
 
     def set_ttl(self, key, ttl):
         return False

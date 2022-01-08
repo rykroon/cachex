@@ -4,6 +4,7 @@ import time
 import redis
 
 from cache.backends.base import BaseBackend
+from cache.backends.dummy import DummyBackend
 from cache.backends.local import LocalBackend
 from cache.backends.redis import RedisBackend
 from cache.constants import MissingKey
@@ -94,6 +95,11 @@ class TestRedisBackend(unittest.TestCase, AbstractBackendTest):
 class TestLocalBackend(unittest.TestCase, AbstractBackendTest):
     def setUp(self):
         self.backend = LocalBackend()
+
+
+# class TestDummyBackend(unittest.TestCase, AbstractBackendTest):
+#     def setUp(self):
+#         self.backend = DummyBackend()
 
 
 if __name__ == '__main__':

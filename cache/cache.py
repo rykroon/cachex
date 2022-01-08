@@ -50,36 +50,3 @@ class Cache:
         key = self.key_builder(key, self.namespace)
         ttl = self.default_ttl if ttl is Default else ttl
         return self._backend.set_ttl(key, ttl)
-
-
-class AsyncCache(Cache):
-
-    async def get(self, key, default=None):
-        key = self.key_builder(key, self.namespace)
-        value = await self._backend.get(key)
-        if value is MissingKey:
-            return default
-        return self._serializer.loads(value)
-
-    async def set(self, key, value, ttl=Default):
-        key = self.key_builder(key, self.namespace)
-        value = self._serializer.dumps(value)
-        ttl = self.default_ttl if ttl is Default else ttl
-        await self._backend.set(key, value, ttl)
-
-    async def delete(self, key):
-        key = self.key_builder(key, self.namespace)
-        await self._backend.delete(key)
-
-    async def has_key(self, key):
-        key = self.key_builder(key, self.namespace)
-        return await self._backend.has_key(key)
-
-    async def get_ttl(self, key):
-        key = self.key_builder(key, self.namespace)
-        return await self._backend.get_ttl(key)
-
-    async def set_ttl(self, key, ttl=Default):
-        key = self.key_builder(key, self.namespace)
-        ttl = self.default_ttl if ttl is Default else ttl
-        return await self._backend.set_ttl(key, ttl)

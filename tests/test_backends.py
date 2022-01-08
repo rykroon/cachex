@@ -42,11 +42,11 @@ class TestDummyBackend(unittest.TestCase):
         assert self.backend.get('a') is MissingKey
     
     def test_set(self):
-        self.backend.set('a', 1, None)
+        assert self.backend.set('a', 1, None) is None
         assert self.backend.get('a') is MissingKey
 
     def test_delete(self):
-        self.backend.delete('a') == False
+        assert self.backend.delete('a') == False
         self.backend.set('a', 1, None)
         assert self.backend.delete('a') == False
 
@@ -59,7 +59,7 @@ class TestDummyBackend(unittest.TestCase):
         assert self.backend.get_many('a', 'b', 'c') == {}
 
     def test_set_many(self):
-        self.backend.set_many({'a': 1, 'b': 2, 'c': 3}, None)
+        assert self.backend.set_many({'a': 1, 'b': 2, 'c': 3}, None) is None
         assert self.backend.get_many('a', 'b', 'c') == {}
 
     def test_delete_many(self):

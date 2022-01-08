@@ -151,10 +151,5 @@ class TestLocalBackend(unittest.TestCase, AbstractBackendTest):
         self.backend = LocalBackend()
 
 
-# class TestDummyBackend(unittest.TestCase, AbstractBackendTest):
-#     def setUp(self):
-#         self.backend = DummyBackend()
-
-
 if __name__ == '__main__':
     unittest.main()

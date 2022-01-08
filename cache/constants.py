@@ -18,14 +18,12 @@ class Singleton:
         return super().__repr__()
 
 
-class UndefinedType(Singleton):
-    _repr = 'Undefined'
-
-    def __bool__(self):
-        return False
+class MissingKeyType(Singleton):
+    _repr = 'MissingKey'
 
 
-Undefined = UndefinedType()
+class DefaultType(Singleton):
+    _repr = 'Default'
 
-MissingKey = Undefined
-Default = Undefined
+MissingKey = MissingKeyType()
+Default = DefaultType()

@@ -42,6 +42,20 @@ class Cache:
         key = self.key_builder(key, self.namespace)
         return self._backend.has_key(key)
 
+    def get_many(self, *keys):
+        keys = [self.key_builder(k, self.namespace) for k in keys]
+        return self.backend.get_many(*keys)
+
+    def set_many(self, mapping, ttl=Default):
+        keys = (self.key_builder(k, self.namespace) for k in mapping.keys())
+        mapping = dict(zip(keys, mapping.values()))
+        ttl = self.default_ttl if ttl is Default else ttl
+        return self.backend.set_many(mapping, ttl)
+
+    def delete_many(self, *keys):
+        keys = [self.key_builder(k, self.namespace) for k in keys]
+        return self.delete_many(*keys) 
+
     def get_ttl(self, key):
         key = self.key_builder(key, self.namespace)
         return self._backend.get_ttl(key)

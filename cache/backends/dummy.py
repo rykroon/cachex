@@ -26,7 +26,7 @@ class DummyBackend(BaseBackend):
         pass
 
     def delete_many(self, *keys):
-        return 0
+        pass
 
     def get_ttl(self, key):
         return MissingKey

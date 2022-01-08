@@ -33,6 +33,51 @@ class TestBackend(unittest.TestCase):
             backend.set_ttl('a', None)
 
 
+class TestDummyBackend(unittest.TestCase):
+
+    def setUp(self):
+        self.backend = DummyBackend()
+
+    def test_get(self):
+        assert self.backend.get('a') is MissingKey
+    
+    def test_set(self):
+        self.backend.set('a', 1, None)
+        assert self.backend.get('a') is MissingKey
+
+    def test_delete(self):
+        self.backend.delete('a') == False
+        self.backend.set('a', 1, None)
+        assert self.backend.delete('a') == False
+
+    def test_has_key(self):
+        assert self.backend.has_key('a') == False
+        self.backend.set('a', 1, None)
+        assert self.backend.has_key('a') == False
+
+    def test_get_many(self):
+        assert self.backend.get_many('a', 'b', 'c') == {}
+
+    def test_set_many(self):
+        self.backend.set_many({'a': 1, 'b': 2, 'c': 3}, None)
+        assert self.backend.get_many('a', 'b', 'c') == {}
+
+    def test_delete_many(self):
+        assert self.backend.delete_many('a', 'b', 'c') is None
+
+    def get_ttl(self):
+        assert self.get_ttl('a') is MissingKey
+        self.backend.set('a', 1, None)
+        assert self.get_ttl('a') is MissingKey
+        self.backend.set('a', 1, 300)
+        assert self.get_ttl('a') is MissingKey
+
+    def set_ttl(self):
+        assert self.backend.set_ttl('a', None) == False
+        self.backend.set('a', 1, None)
+        assert self.backend.set_ttl('a', None) == False
+
+
 class AbstractBackendTest:
 
     def test_get_missingkey(self):

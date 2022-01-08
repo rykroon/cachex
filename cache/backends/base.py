@@ -1,13 +1,13 @@
 from typing import Any, Optional, Union
-from cache.constants import UndefinedType
+from cache.constants import MissingKeyType
 
 
 class BaseBackend:
 
-    def get(self, key: str) -> Any:
+    def get(self, key: str) -> Union[Any, MissingKeyType]:
         """
             Returns the value associated with the key.
-            Raises KeyError if key is not found.
+            Returns MissingKey if key is not found.
         """
         raise NotImplementedError
 
@@ -41,11 +41,11 @@ class BaseBackend:
     def delete_many(self, keys: list[str]):
         raise NotImplementedError
 
-    def get_ttl(self, key: str) -> Optional[int]:
+    def get_ttl(self, key: str) -> Union[int, None, MissingKeyType]:
         """
             Returns the TTL of the key.
             Return None if key does not have a ttl
-            Raises KeyError if the key does not exist.
+            Returns MissingKey if the key does not exist.
         """
         raise NotImplementedError
 

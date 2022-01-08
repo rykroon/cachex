@@ -19,6 +19,15 @@ class DummyBackend(BaseBackend):
     def has_key(self, key):
         return False
 
+    def get_many(self, *keys):
+        return {}
+
+    def set_many(self, mapping, ttl):
+        pass
+
+    def delete_many(self, *keys):
+        return 0
+
     def get_ttl(self, key):
         return MissingKey
 

@@ -3,6 +3,7 @@ import time
 
 import redis
 
+from cache.backends.base import BaseBackend
 from cache.backends.local import LocalBackend
 from cache.backends.redis import RedisBackend
 from cache.constants import MissingKey
@@ -31,11 +32,10 @@ class TestBackend(unittest.TestCase):
             backend.set_ttl('a', None)
 
 
-class AbstractSyncBackend:
+class AbstractBackendTest:
 
     def test_get(self):
-        with self.assertRaises(KeyError):
-            self.backend.get('a')
+        assert self.backend.get('a') is MissingKey
 
         self.backend.set('a', 1, None)
         assert self.backend.get('a') == 1
@@ -54,8 +54,7 @@ class AbstractSyncBackend:
         self.backend.set('a', 1, None)
         self.backend.delete('a')
 
-        with self.assertRaises(KeyError):
-            self.backend.get('a')
+        assert self.backend.get('a') is MissingKey
         
     def test_has_key(self):
         assert self.backend.has_key('a') == False
@@ -65,8 +64,7 @@ class AbstractSyncBackend:
         # Test that key no longer exists after expiration
 
     def test_get_ttl(self):
-        with self.assertRaises(KeyError):
-            self.backend.get_ttl('a')
+        assert self.backend.get_ttl('a') is MissingKey
         
         self.backend.set('a', 1, None)
         assert self.backend.get_ttl('a') is None
@@ -86,14 +84,14 @@ class AbstractSyncBackend:
         assert self.backend.get_ttl('a') == 20
 
 
-class TestRedisBackend(unittest.TestCase, AbstractSyncBackend):
+class TestRedisBackend(unittest.TestCase, AbstractBackendTest):
     def setUp(self):
         client = redis.Redis()
         client.flushdb()
         self.backend = RedisBackend(client=client)
 
 
-class TestLocalBackend(unittest.TestCase, AbstractSyncBackend):
+class TestLocalBackend(unittest.TestCase, AbstractBackendTest):
     def setUp(self):
         self.backend = LocalBackend()
 

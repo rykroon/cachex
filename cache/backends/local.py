@@ -54,7 +54,7 @@ class LocalBackend(BaseBackend):
 
     def delete(self, key):
         value = self._get_value(key)
-        if value is None:
+        if value is MissingKey:
             return False
 
         del self.data[key]
@@ -62,7 +62,7 @@ class LocalBackend(BaseBackend):
 
     def has_key(self, key):
         value = self._get_value(key)
-        return value is not None
+        return value is not MissingKey
 
     def get_many(self, *keys):
         values = (self.get(k) for k in keys) 
@@ -79,7 +79,7 @@ class LocalBackend(BaseBackend):
     def get_ttl(self, key):
         value = self._get_value(key)
         if value is MissingKey:
-            raise KeyError
+            return MissingKey
 
         return value.get_ttl()
 

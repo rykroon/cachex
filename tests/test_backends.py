@@ -35,34 +35,43 @@ class TestBackend(unittest.TestCase):
 
 class AbstractBackendTest:
 
-    def test_get(self):
+    def test_get_missingkey(self):
         assert self.backend.get('a') is MissingKey
 
+    def test_get_any(self):
         self.backend.set('a', 1, None)
         assert self.backend.get('a') == 1
 
-    def test_set(self):
+    def test_set_persist(self):
         self.backend.set('a', 1, None)
         assert self.backend.get('a') == 1
         assert self.backend.get_ttl('a') == None
         
+    def test_set_expire(self):
         self.backend.set('a', 1, 20)
+        assert self.backend.get('a') == 1
         assert self.backend.get_ttl('a') == 20
 
-    def test_delete(self):
+    def test_delete_false(self):
         assert self.backend.delete('a') == False
 
+    def test_delete_true(self):
         self.backend.set('a', 1, None)
-        self.backend.delete('a')
-
+        assert self.backend.delete('a') == True
         assert self.backend.get('a') is MissingKey
         
-    def test_has_key(self):
+    def test_has_key_false(self):
         assert self.backend.has_key('a') == False
+        self.backend.set('a', 1, 1)
+        time.sleep(1)
+        assert self.backend.has_key('a') == False
+
+    def test_has_key_true(self):
         self.backend.set('a', 1, None)
         assert self.backend.has_key('a') == True
 
-        # Test that key no longer exists after expiration
+        self.backend.set('a', 1, 1)
+        assert self.backend.has_key('a') == True
 
     def test_get_ttl(self):
         assert self.backend.get_ttl('a') is MissingKey

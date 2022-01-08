@@ -34,18 +34,18 @@ class LocalBackend(BaseBackend):
     def _get_value(self, key):
         value = self.data.get(key)
         if value is None:
-            return
+            return MissingKey
         
         if value.is_expired():
             del self.data[key]
-            return
+            return MissingKey
 
         return value
 
     def get(self, key):
         value = self._get_value(key)
-        if value is None:
-            raise KeyError
+        if value is MissingKey:
+            return MissingKey
         return self.serializer.loads(value.value)
 
     def set(self, key, value, ttl):
@@ -64,16 +64,28 @@ class LocalBackend(BaseBackend):
         value = self._get_value(key)
         return value is not None
 
+    def get_many(self, *keys):
+        values = (self.get(k) for k in keys) 
+        return {k: v for k, v in zip(keys, values) if v is not MissingKey}
+
+    def set_many(self, mapping, ttl):
+        for k, v in mapping.items():
+            self.set(k, v, ttl)
+
+    def delete_many(self, *keys):
+        for k in keys:
+            self.delete(k)
+
     def get_ttl(self, key):
         value = self._get_value(key)
-        if value is None:
+        if value is MissingKey:
             raise KeyError
 
         return value.get_ttl()
 
     def set_ttl(self, key, ttl):
         value = self._get_value(key)
-        if value is None:
+        if value is MissingKey:
             return False
         value.set_ttl(ttl)
         return True

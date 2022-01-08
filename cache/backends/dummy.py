@@ -32,4 +32,4 @@ class DummyBackend(BaseBackend):
         return MissingKey
 
     def set_ttl(self, key, ttl):
-        return False
+        pass

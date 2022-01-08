@@ -1,6 +1,5 @@
 
 DEFAULT_TTL = 300
-Persist = None # a Synonym for a Persistent key, AKA a key that does not expire.
 
 
 class Singleton:
@@ -24,6 +23,7 @@ class MissingKeyType(Singleton):
 
 class DefaultType(Singleton):
     _repr = 'Default'
+
 
 MissingKey = MissingKeyType()
 Default = DefaultType()

@@ -49,9 +49,8 @@ class BaseBackend:
         """
         raise NotImplementedError
 
-    def set_ttl(self, key: str, ttl: Optional[int]) -> bool:
+    def set_ttl(self, key: str, ttl: Optional[int]):
         """
             Sets the TTL of the key.
-            Returns True if the ttl was set, else False
         """
         raise NotImplementedError

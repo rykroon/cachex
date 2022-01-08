@@ -65,17 +65,12 @@ class TestDummyBackend(unittest.TestCase):
     def test_delete_many(self):
         assert self.backend.delete_many('a', 'b', 'c') is None
 
-    def get_ttl(self):
-        assert self.get_ttl('a') is MissingKey
+    def test_get_ttl(self):
+        assert self.backend.get_ttl('a') is MissingKey
         self.backend.set('a', 1, None)
-        assert self.get_ttl('a') is MissingKey
-        self.backend.set('a', 1, 300)
-        assert self.get_ttl('a') is MissingKey
-
-    def set_ttl(self):
-        assert self.backend.set_ttl('a', None) == False
-        self.backend.set('a', 1, None)
-        assert self.backend.set_ttl('a', None) == False
+        assert self.backend.get_ttl('a') is MissingKey
+        self.backend.set_ttl('a', 300)
+        assert self.backend.get_ttl('a') is MissingKey
 
 
 class AbstractBackendTest:
@@ -118,25 +113,15 @@ class AbstractBackendTest:
         self.backend.set('a', 1, 1)
         assert self.backend.has_key('a') == True
 
-    def test_get_ttl(self):
+    def test_set_ttl_and_get_ttl(self):
         assert self.backend.get_ttl('a') is MissingKey
-        
+
         self.backend.set('a', 1, None)
         assert self.backend.get_ttl('a') is None
-        self.backend.set('a', 1, 20)
-        assert self.backend.get_ttl('a') == 20
 
-    def test_set_ttl(self):
-        # Assert setting TTL of non-existent key returns False
-        assert self.backend.set_ttl('a', None) == False
-        assert self.backend.set_ttl('a', 20) == False
-
-        # Assert setting TTL of existing key returns True
-        self.backend.set('a', 1, None)
-        assert self.backend.set_ttl('a', None) == True
-        assert self.backend.get_ttl('a') is None
-        assert self.backend.set_ttl('a', 20) == True
-        assert self.backend.get_ttl('a') == 20
+        self.backend.set_ttl('a', 300)
+        time.sleep(1)
+        assert self.backend.get_ttl('a') == 299
 
 
 class TestRedisBackend(unittest.TestCase, AbstractBackendTest):

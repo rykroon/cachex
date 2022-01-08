@@ -80,12 +80,9 @@ class LocalBackend(BaseBackend):
         value = self._get_value(key)
         if value is MissingKey:
             return MissingKey
-
         return value.get_ttl()
 
     def set_ttl(self, key, ttl):
         value = self._get_value(key)
-        if value is MissingKey:
-            return False
-        value.set_ttl(ttl)
-        return True
+        if value is not MissingKey:
+            value.set_ttl(ttl)

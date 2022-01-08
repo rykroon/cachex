@@ -39,9 +39,12 @@ class RedisBackend(BaseBackend):
         return {k: v for k, v in zip(keys, values) if v is not MissingKey}
 
     def set_many(self, mapping, ttl):
-        mapping = {k: self.serializer.dumps(v) for k, v in mapping.items()}
-        self.client.mset(mapping)
-        # need to add logic to set ttl
+        pipeline = self.client.pipeline()
+        for k, v in mapping.items():
+            value = self.serializer.dumps(v)
+            pipeline.set(k, value, ex=ttl)
+        
+        pipeline.execute()
 
     def delete_many(self, *keys):
         self.client.delete(*keys)
@@ -57,13 +60,8 @@ class RedisBackend(BaseBackend):
         return result
 
     def set_ttl(self, key, ttl):
-        if ttl is not None:
-            return self.client.expire(key, ttl)
-
-        result = self.client.persist(key)
-        if result:
-            # persist() only returns True if the key wasn't already persisted.
-            return result
-
-        # If the result is False we need to check if the key exists.
-        return self.has_key(key)
+        if ttl is None:
+            self.client.persist(key)
+        else:
+            self.client.expire(key, ttl)
+        

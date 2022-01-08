@@ -28,4 +28,4 @@ class UndefinedType(Singleton):
 Undefined = UndefinedType()
 
 MissingKey = Undefined
-NotPassed = Undefined
+Default = Undefined

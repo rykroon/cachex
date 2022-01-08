@@ -36,7 +36,7 @@ class Cache:
 
     def delete(self, key):
         key = self.key_builder(key, self.namespace)
-        self._backend.delete(key)
+        return self._backend.delete(key)
 
     def has_key(self, key):
         key = self.key_builder(key, self.namespace)
@@ -44,17 +44,17 @@ class Cache:
 
     def get_many(self, *keys):
         keys = [self.key_builder(k, self.namespace) for k in keys]
-        return self.backend.get_many(*keys)
+        return self._backend.get_many(*keys)
 
     def set_many(self, mapping, ttl=Default):
         keys = (self.key_builder(k, self.namespace) for k in mapping.keys())
         mapping = dict(zip(keys, mapping.values()))
         ttl = self.default_ttl if ttl is Default else ttl
-        return self.backend.set_many(mapping, ttl)
+        return self._backend.set_many(mapping, ttl)
 
     def delete_many(self, *keys):
         keys = [self.key_builder(k, self.namespace) for k in keys]
-        return self.delete_many(*keys) 
+        return self._backend.delete_many(*keys) 
 
     def get_ttl(self, key):
         key = self.key_builder(key, self.namespace)

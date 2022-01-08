@@ -21,7 +21,7 @@ class RedisBackend(BaseBackend):
     def get(self, key):
         value = self.client.get(key)
         if value is None:
-            raise KeyError(key)
+            return MissingKey
         return self.serializer.loads(value)
 
     def set(self, key, value, ttl):
@@ -34,10 +34,23 @@ class RedisBackend(BaseBackend):
     def has_key(self, key):
         return self.client.exists(key) == 1
 
+    def get_many(self, *keys):
+        values = self.client.mget(*keys)
+        values = (MissingKey if v is None else self.serializer.loads(v) for v in values)
+        return {k: v for k, v in zip(keys, values) if v is not MissingKey}
+
+    def set_many(self, mapping, ttl):
+        mapping = {k: self.serializer.dumps(v) for k, v in mapping.items()}
+        self.client.mset(mapping)
+        # need to add logic to set ttl
+
+    def delete_many(self, *keys):
+        self.client.delete(*keys)
+
     def get_ttl(self, key):
         result = self.client.ttl(key)
         if result == -2:
-            raise KeyError
+            return MissingKey
 
         if result == -1:
             return None

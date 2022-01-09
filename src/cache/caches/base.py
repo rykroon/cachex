@@ -31,7 +31,7 @@ class Cache:
 
     def set(self, key, value, ttl=Default):
         if ttl == 0:
-            self.delete(key)
+            raise ValueError("TTL cannot be zero.")
 
         key = self.key_builder(key, self.namespace)
         ttl = self.default_ttl if ttl is Default else ttl
@@ -57,7 +57,7 @@ class Cache:
 
     def set_many(self, mapping, ttl=Default):
         if ttl == 0:
-            self.delete_many(*mapping.keys())
+            raise ValueError("TTL cannot be zero.")
 
         new_mapping = {}
         for k, v in mapping.items():
@@ -77,7 +77,7 @@ class Cache:
 
     def set_ttl(self, key, ttl=Default):
         if ttl == 0:
-            return self.delete(key)
+            raise ValueError("TTL cannot be zero.")
 
         key = self.key_builder(key, self.namespace)
         ttl = self.default_ttl if ttl is Default else ttl

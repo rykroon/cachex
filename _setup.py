@@ -11,3 +11,8 @@ setup(
     author_email='rykroon.tech@gmail.com',
     packages=find_packages()
 )
+
+
+# https://packaging.python.org/en/latest/tutorials/packaging-projects/
+# python3 -m build
+# python3 -m twine upload --repository testpypi dist/*

@@ -27,6 +27,10 @@ class RedisBackend(BaseBackend):
         value = self.serializer.dumps(value)
         self.client.set(key, value, ex=ttl)
 
+    def add(self, key, value, ttl):
+        value = self.serializer.dumps(value)
+        return self.client.set(key, value, ex=ttl, nx=True) is not None
+
     def delete(self, key):
         return self.client.delete(key) != 0
 

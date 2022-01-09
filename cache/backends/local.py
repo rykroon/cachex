@@ -52,6 +52,12 @@ class LocalBackend(BaseBackend):
         value = self.serializer.dumps(value)
         self.data[key] = LocalValue(value, ttl)
 
+    def add(self, key, value, ttl):
+        if self.has_key(key):
+            return False
+        self.set(key, value, ttl)
+        return True
+
     def delete(self, key):
         value = self._get_value(key)
         if value is MissingKey:

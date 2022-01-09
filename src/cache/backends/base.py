@@ -38,7 +38,8 @@ class BaseBackend:
     def set_many(self, mapping: dict[str, Any], ttl: Optional[int]):
         raise NotImplementedError
 
-    def delete_many(self, keys: list[str]):
+    def delete_many(self, keys: list[str]) -> list[str]:
+        # Return the number of deleted keys
         raise NotImplementedError
 
     def get_ttl(self, key: str) -> Union[int, None, MissingKeyType]:
@@ -53,4 +54,7 @@ class BaseBackend:
         """
             Sets the TTL of the key.
         """
+        raise NotImplementedError
+
+    def clear(self):
         raise NotImplementedError

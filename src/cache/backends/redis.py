@@ -68,4 +68,7 @@ class RedisBackend(BaseBackend):
             self.client.persist(key)
         else:
             self.client.expire(key, ttl)
+
+    def clear(self):
+        self.client.flushdb()
         

@@ -33,3 +33,6 @@ class DummyBackend(BaseBackend):
 
     def set_ttl(self, key, ttl):
         pass
+
+    def clear(self):
+        pass

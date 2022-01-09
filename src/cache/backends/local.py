@@ -92,3 +92,6 @@ class LocalBackend(BaseBackend):
         value = self._get_value(key)
         if value is not MissingKey:
             value.set_ttl(ttl)
+
+    def clear(self):
+        self.data.clear()

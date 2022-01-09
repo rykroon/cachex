@@ -72,10 +72,7 @@ class Cache:
 
     def get_ttl(self, key):
         key = self.key_builder(key, self.namespace)
-        result = self._backend.get_ttl(key)
-        if result is MissingKey:
-            return 0
-        return result
+        return self._backend.get_ttl(key)
 
     def set_ttl(self, key, ttl=Default):
         if ttl == 0:

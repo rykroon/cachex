@@ -9,12 +9,12 @@ class Cache:
             namespace=None,
             ttl=DEFAULT_TTL,
             key_builder=None,
-            backend=LocalBackend()
+            backend=None
             ):
         self.namespace = namespace
         self.default_ttl = ttl
         self.key_builder = key_builder or self._default_key_builder
-        self._backend = backend
+        self._backend = backend or LocalBackend()
 
     def __contains__(self, key):
         return self.has_key(key)
@@ -36,6 +36,11 @@ class Cache:
         key = self.key_builder(key, self.namespace)
         ttl = self.default_ttl if ttl is Default else ttl
         self._backend.set(key, value, ttl)
+
+    def add(self, key, value, ttl=Default):
+        key = self.key_builder(key, self.namespace)
+        ttl = self.default_ttl if ttl is Default else ttl
+        return self._backend.add(key, value, ttl)
 
     def delete(self, key):
         key = self.key_builder(key, self.namespace)

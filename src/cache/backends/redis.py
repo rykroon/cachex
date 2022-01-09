@@ -50,7 +50,10 @@ class RedisBackend(BaseBackend):
         pipeline.execute()
 
     def delete_many(self, *keys):
-        self.client.delete(*keys)
+        pipeline = self.client.pipeline()
+        for k in keys:
+            pipeline.delete(k)
+        return [result == 1 for result in pipeline.execute()]
 
     def get_ttl(self, key):
         result = self.client.ttl(key)

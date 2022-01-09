@@ -78,8 +78,7 @@ class LocalBackend(BaseBackend):
             self.set(k, v, ttl)
 
     def delete_many(self, *keys):
-        for k in keys:
-            self.delete(k)
+        return [self.delete(k) for k in keys]
 
     def get_ttl(self, key):
         value = self._get_value(key)

@@ -56,7 +56,7 @@ class RedisBackend(BaseBackend):
     def get_ttl(self, key):
         result = self.client.ttl(key)
         if result == -2:
-            return MissingKey
+            return 0
 
         if result == -1:
             return None

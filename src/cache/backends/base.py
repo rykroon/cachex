@@ -42,7 +42,7 @@ class BaseBackend:
         # Return the number of deleted keys
         raise NotImplementedError
 
-    def get_ttl(self, key: str) -> Union[int, None, MissingKeyType]:
+    def get_ttl(self, key: str) -> Optional[int]:
         """
             Returns the TTL of the key.
             Return None if key does not have a ttl

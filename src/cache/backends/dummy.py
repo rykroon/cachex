@@ -29,7 +29,7 @@ class DummyBackend(BaseBackend):
         pass
 
     def get_ttl(self, key):
-        return MissingKey
+        return 0
 
     def set_ttl(self, key, ttl):
         pass

@@ -71,8 +71,7 @@ class LocalBackend(BaseBackend):
         return value is not MissingKey
 
     def get_many(self, *keys):
-        values = (self.get(k) for k in keys) 
-        return {k: v for k, v in zip(keys, values) if v is not MissingKey}
+        return [self.get(k) for k in keys]
 
     def set_many(self, mapping, ttl):
         for k, v in mapping.items():

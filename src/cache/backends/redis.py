@@ -39,8 +39,7 @@ class RedisBackend(BaseBackend):
 
     def get_many(self, *keys):
         values = self.client.mget(*keys)
-        values = (MissingKey if v is None else self.serializer.loads(v) for v in values)
-        return {k: v for k, v in zip(keys, values) if v is not MissingKey}
+        return [MissingKey if v is None else self.serializer.loads(v) for v in values]
 
     def set_many(self, mapping, ttl):
         pipeline = self.client.pipeline()

@@ -32,13 +32,13 @@ class BaseBackend:
     def has_key(self, key: str) -> bool:
         raise NotImplementedError
 
-    def get_many(self, keys: list[str]) -> dict[str, Any]:
+    def get_many(self, keys: list[str]) -> list[Any]:
         raise NotImplementedError
 
     def set_many(self, mapping: dict[str, Any], ttl: Optional[int]):
         raise NotImplementedError
 
-    def delete_many(self, keys: list[str]) -> list[str]:
+    def delete_many(self, keys: list[str]) -> list[bool]:
         # Return the number of deleted keys
         raise NotImplementedError
 

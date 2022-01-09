@@ -50,9 +50,10 @@ class Cache:
         key = self.key_builder(key, self.namespace)
         return self._backend.has_key(key)
 
-    def get_many(self, *keys):
+    def get_many(self, keys, default=None):
         keys = [self.key_builder(k, self.namespace) for k in keys]
-        return self._backend.get_many(*keys)
+        values = self._backend.get_many(*keys)
+        return [default if v is MissingKey else v for v in values]
 
     def set_many(self, mapping, ttl=Default):
         if ttl == 0:

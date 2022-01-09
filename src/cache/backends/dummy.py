@@ -20,7 +20,7 @@ class DummyBackend(BaseBackend):
         return False
 
     def get_many(self, *keys):
-        return {}
+        return []
 
     def set_many(self, mapping, ttl):
         pass

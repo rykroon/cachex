@@ -72,3 +72,17 @@ class PickleSerializer(BaseSerializer):
 
     def loads(self, value):
         return pickle.loads(value)
+
+
+class RedisSerializer(PickleSerializer):
+
+    def dumps(self, value):
+        if type(value) == int:
+            return value
+        return super().dumps(value)
+
+    def loads(self, value):
+        try:
+            return int(value)
+        except ValueError:
+            return super().loads(value)

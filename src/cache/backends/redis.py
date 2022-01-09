@@ -1,12 +1,12 @@
 from cache.backends.base import BaseBackend
 from cache.constants import MissingKey
-from cache.serializers import PickleSerializer
+from cache.serializers import RedisSerializer
 
 
 class RedisBackend(BaseBackend):
 
     def __init__(self, serializer=None, client=None, **client_kwargs):
-        self.serializer = serializer if serializer is not None else PickleSerializer()
+        self.serializer = serializer if serializer is not None else RedisSerializer()
         if client and client_kwargs:
             raise ValueError("Cannot pass a client and client kwargs.")
 

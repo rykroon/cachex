@@ -84,3 +84,6 @@ class Cache:
         key = self.key_builder(key, self.namespace)
         ttl = self.default_ttl if ttl is Default else ttl
         return self._backend.set_ttl(key, ttl)
+
+    def clear(self):
+        self._backend.clear()
